@@ -6,11 +6,6 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Tangerine">
 
   <style>
-    .centered-container {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
     body {
       background-color: #ffd4e6;
     }
@@ -18,11 +13,20 @@
       font-family: 'Tangerine';
       font-size: 3em;
     }
-    #videoElement {
+    .centered-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .video-element {
 	    transform: rotateY(180deg);
 	    -webkit-transform:rotateY(180deg); /* Safari and Chrome */
 	    -moz-transform:rotateY(180deg); /* Firefox */
 	  }
+    .fallback-answer {
+      font-size: 5em;
+    }
+
   </style>
 </head>
 <body>
@@ -30,20 +34,29 @@
     <h1>Who is the prettiest?</h1>
   </div>
   <div class="centered-container">
-    <video autoplay="true" id="videoElement">
+    <video autoplay="true" id="video-element" class="video-element">
     </video>
   </div>
+  <div class="centered-container">
+    <div id="fallback-answer" class="fallback-answer" style="display: none">You =)</div>
+  </div>
   <script>
-    var video = document.querySelector("#videoElement");
+    const video = document.querySelector("#video-element");
+    const fallbackAnswer = () => {
+      document.querySelector("#fallback-answer").style.display = "block";
+    }
 
-    if (navigator.mediaDevices.getUserMedia) {
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
       navigator.mediaDevices.getUserMedia({ video: true })
         .then(function (stream) {
           video.srcObject = stream;
         })
-        .catch(function (err0r) {
-          console.log("Something went wrong!");
+        .catch(function (e) {
+          console.error("Something went wrong!", e);
+          fallbackAnswer()
         });
+    } else {
+      fallbackAnswer();
     }
 
 </script>
